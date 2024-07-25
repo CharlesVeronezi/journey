@@ -1,0 +1,16 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "./queries" #Onde fica as queries que quero q seja criado
+    schema: "./migrations" #Diretorio das migrations, usado para criar o schema do DB
+    gen: #regras de geração
+      go: #gerar codigo go
+        out: "." #onde sera gerado o codigo
+        package: "pgstore" #nome do pacote q sera gerado
+        sql_package: "pgx/v5" #driver que sera usado
+        overrides: #permite sobreescrever um tipo que seria gerado por outro tipo, comando opcional
+          - db_type: "uuid"
+            go_type: 
+              import: "github.com/google/uuid"
+              type: "UUID"
+          

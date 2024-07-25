@@ -1,0 +1,57 @@
+services:
+  mailpit:
+    image: axllent/mailpit
+    restart: unless-stopped
+    ports:
+      - 8025:8025
+      - 1025:1025
+    volumes:
+      - mailpit:/data
+    environment:
+      MP_DATABASE: /data/mailpit.db
+
+  db:
+    image: postgres:latest
+    restart: unless-stopped #restart automatico caso aconteca algum problema
+    ports: 
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: journey
+      POSTGRES_PASSWORD: pgpassword
+    volumes:
+     - db:/var/lib/postgresql/data
+
+  app:
+   build: .
+   ports:
+     - 3000:3000
+   depends_on:
+     - db
+  
+#  adminer:
+#    image: adminer
+#    restart: always
+#    ports:
+#      - 8080:8080
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: pgpassword
+    ports:
+      - 8081:80
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+
+volumes:
+  db:
+    driver: local #forma de persistir os dados
+  pgadmin:
+    driver: local
+  mailpit:
+    driver: local
